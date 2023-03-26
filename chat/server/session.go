@@ -13,6 +13,9 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// Maximum number of queued messages before session is considered stale and dropped.
+const sendQueueLimit = 128
+
 // SessionProto is the type of the wire transport.
 type SessionProto int
 
@@ -30,6 +33,10 @@ type Session struct {
 
 	// Reference to multiplexing session. Set only for proxy sessions.
 	multi        *Session
+
+	// Outbound mesages, buffered.
+	// The content must be serialized in format suitable for the session.
+	send chan interface{}
 }
 
 type Subscription struct {

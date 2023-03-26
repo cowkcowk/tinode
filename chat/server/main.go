@@ -6,7 +6,7 @@
  *
  *****************************************************************************/
 
- package main
+package main
 
 import (
 	"encoding/json"
@@ -14,20 +14,33 @@ import (
 	"io/ioutil"
 	"log"
 
+	"net/http"
 	"os"
 	"runtime"
-	"net/http"
 )
 
 const (
 	// Current API version
 	VERSION = "0.13"
-
-
 )
 
-// Build timestamp set by the compiler
-var buildstamp = ""
+// Build version number defined by the compiler:
+//
+//	-ldflags "-X main.buildstamp=value_to_assign_to_buildstamp"
+//
+// Reported to clients in response to {hi} message.
+// For instance, to define the buildstamp as a timestamp of when the server was built add a
+// flag to compiler command line:
+//
+//	-ldflags "-X main.buildstamp=`date -u '+%Y%m%dT%H:%M:%SZ'`"
+//
+// or to set it to git tag:
+//
+//	-ldflags "-X main.buildstamp=`git describe --tags`"
+var buildstamp = "undef"
+
+var globals struct {
+}
 
 // Contentx of the configuration file
 type configType struct {
@@ -52,8 +65,6 @@ func main() {
 
 	log.Printf("Using config from: '%s'", *configfile)
 	var config configType
-
-	if file, err := os.Open(*configType)
 	if raw, err := ioutil.ReadFile(*configfile); err != nil {
 		log.Fatal(err)
 	} else if err = json.Unmarshal(raw, &config); err != nil {
@@ -68,5 +79,5 @@ func main() {
 
 	mux.HandleFunc("v0/channels", serveWebSocket)
 
-	mux.Handle("v0/channels/lp", )
+	mux.Handle("v0/channels/lp")
 }

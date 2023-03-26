@@ -19,4 +19,11 @@ import (
 	"github.com/tinode/chat/server/logs"
 )
 
-func (sess *Session)
+func (sess *Session) sendMessageLp(wrt http.ResponseWriter, msg interface{}) bool {
+	if len(sess.send) > sendQueueLimit {
+		logs.Err.Println("logPoll: outbound queue limit exceeded", sess.sid)
+		return false
+	}
+
+	sta
+}
